@@ -45,29 +45,29 @@ for ( my $i = 0; $i < $nrows; ++$i ) {
     }
 }
 
-daily(
-    {
-        header   => \@header,
-        result   => $result,
-        ndays    => $ndays,
-        nrows    => $nrows,
-        ncols    => $ncols,
-        file_fmt => $file_fmt,
-        cb       => sub {
-            my ( $rows, $cols, $item, $result ) = @_;
+my %params = (
+    header   => [],
+    result   => $result,
+    ndays    => $ndays,
+    nrows    => $nrows,
+    ncols    => $ncols,
+    file_fmt => $file_fmt,
+    cb       => sub {
+        my ( $rows, $cols, $item, $result ) = @_;
 
-            if ( $item != -9999 ) {
-                $result->[$rows][$cols]{val} += $item;
-                ++$result->[$rows][$cols]{cnt};
-            }
-        },
-    }
+        if ( $item != -9999 ) {
+            $result->[$rows][$cols]{val} += $item;
+            ++$result->[$rows][$cols]{cnt};
+        }
+    },
 );
+
+daily( \%params );
 
 {
     my $fh = path($output)->filehandle( ">", ":raw:encoding(UTF-8)" );
 
-    print $fh "$_\n" for @header;
+    print $fh "$_\n" for @{ $params{header} };
     for ( my $i = 0; $i < $nrows; ++$i ) {
         for ( my $j = 0; $j < $ncols; ++$j ) {
             my $cnt = $result->[$i][$j]{cnt};
