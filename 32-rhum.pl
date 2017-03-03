@@ -60,6 +60,22 @@ my %params = (
             ++$result->[$rows][$cols]{cnt};
         }
     },
+    cb_final => sub {
+        my ( $nrows, $ncols, $result ) = @_;
+
+        for ( my $i = 0; $i < $nrows; ++$i ) {
+            for ( my $j = 0; $j < $ncols; ++$j ) {
+                my $cnt = $result->[$i][$j]{cnt};
+                my $val = $result->[$i][$j]{val};
+                if ( $cnt > 0 ) {
+                    $result->[$i][$j]{avg} = $val / $cnt;
+                }
+                else {
+                    $result->[$i][$j]{avg} = undef;
+                }
+            }
+        }
+    },
 );
 
 daily( \%params );
@@ -70,10 +86,9 @@ daily( \%params );
     print $fh "$_\n" for @{ $params{header} };
     for ( my $i = 0; $i < $nrows; ++$i ) {
         for ( my $j = 0; $j < $ncols; ++$j ) {
-            my $cnt = $result->[$i][$j]{cnt};
-            my $val = $result->[$i][$j]{val};
-            if ( $cnt > 0 ) {
-                printf $fh "%.2f", $result->[$i][$j]{val} / $cnt;;
+            my $avg = $result->[$i][$j]{avg};
+            if ( defined $avg ) {
+                printf $fh "%.2f", $avg;
             }
             else {
                 print $fh -9999;
@@ -138,6 +153,8 @@ sub daily {
     }
 
     $params->{header} = \@header_strings;
+
+    $params->{cb_final}->( $params->{nrows}, $params->{ncols}, $result );
 }
 
 sub portable_chomp {
