@@ -80,6 +80,9 @@ my %params = (
 
 daily( \%params );
 
+my $ndv = no_data_value( $params{header} );
+warn "no data value: $ndv\n";
+
 {
     my $fh = path($output)->filehandle( ">", ":raw:encoding(UTF-8)" );
 
@@ -91,12 +94,24 @@ daily( \%params );
                 printf $fh "%.2f", $avg;
             }
             else {
-                print $fh -9999;
+                print $fh $ndv;
             }
             print $fh q{ };
         }
         print $fh "\n";
     }
+}
+
+sub no_data_value {
+    my $headers = shift;
+
+    my $ndv;
+    for my $header ( @$headers ) {
+        next unless $header =~ m/^NODATA_value\s(\S+)/;
+        $ndv = $1;
+    }
+
+    return $ndv;
 }
 
 sub daily {
