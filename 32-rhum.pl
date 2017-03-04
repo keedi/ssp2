@@ -33,7 +33,6 @@ my $file_fmt = sprintf(
     $year,
 );
 
-my @header;
 my $result;
 for ( my $i = 0; $i < $nrows; ++$i ) {
     $result->[$i] = [];
