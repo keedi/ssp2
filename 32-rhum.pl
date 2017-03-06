@@ -33,15 +33,10 @@ my $file_fmt = sprintf(
     $year,
 );
 
-my $result;
-for ( my $i = 0; $i < $nrows; ++$i ) {
-    $result->[$i] = [];
-    for ( my $j = 0; $j < $ncols; ++$j ) {
-        $result->[$i][$j] = {
-            val => 0,
-            cnt => 0,
-        };
-    }
+my @files;
+for ( my $i = 1; $i <= $ndays; ++$i ) {
+    my $file = sprintf( $params->{file_fmt}, $i );
+    push @files, $file;
 }
 
 my %params = (
@@ -50,34 +45,47 @@ my %params = (
     ndays    => $ndays,
     nrows    => $nrows,
     ncols    => $ncols,
-    file_fmt => $file_fmt,
+    files    => \@files,
+    cb_init  => sub {
+        my ( $params ) = @_;
+
+        for ( my $i = 0; $i < $params->{nrows}; ++$i ) {
+            $params->{result}[$i] = [];
+            for ( my $j = 0; $j < $params->{ncols}; ++$j ) {
+                $params->{result}[$i][$j] = {
+                    val => 0,
+                    cnt => 0,
+                };
+            }
+        }
+    },
     cb       => sub {
-        my ( $rows, $cols, $item, $result ) = @_;
+        my ( $params, $rows, $cols, $item ) = @_;
 
         if ( $item != -9999 ) {
-            $result->[$rows][$cols]{val} += $item;
-            ++$result->[$rows][$cols]{cnt};
+            $params->{result}[$rows][$cols]{val} += $item;
+            ++$params->{result}[$rows][$cols]{cnt};
         }
     },
     cb_final => sub {
-        my ( $nrows, $ncols, $result ) = @_;
+        my ( $params ) = @_;
 
-        for ( my $i = 0; $i < $nrows; ++$i ) {
-            for ( my $j = 0; $j < $ncols; ++$j ) {
-                my $cnt = $result->[$i][$j]{cnt};
-                my $val = $result->[$i][$j]{val};
+        for ( my $i = 0; $i < $params->{nrows}; ++$i ) {
+            for ( my $j = 0; $j < $params->{ncols}; ++$j ) {
+                my $cnt = $params->{result}[$i][$j]{cnt};
+                my $val = $params->{result}[$i][$j]{val};
                 if ( $cnt > 0 ) {
-                    $result->[$i][$j]{avg} = $val / $cnt;
+                    $params->{result}[$i][$j]{avg} = $val / $cnt;
                 }
                 else {
-                    $result->[$i][$j]{avg} = undef;
+                    $params->{result}[$i][$j]{avg} = undef;
                 }
             }
         }
     },
 );
 
-daily( \%params );
+iter( \%params );
 
 my $ndv = no_data_value( $params{header} );
 warn "no data value: $ndv\n";
@@ -113,12 +121,13 @@ sub no_data_value {
     return $ndv;
 }
 
-sub daily {
+sub iter {
     my $params = shift;
 
+    $params->{cb_init}->($params);
+
     my @header_strings;
-    for ( my $i = 1; $i <= $params->{ndays}; ++$i ) {
-        my $file = sprintf( $params->{file_fmt}, $i );
+    for my $file (@files) {
         warn "processing $file\n";;
 
         my $path = path($file);
@@ -154,7 +163,7 @@ sub daily {
 
             $cols = 0;
             for my $item (@items) {
-                $params->{cb}->( $rows, $cols, $item, $result );
+                $params->{cb}->( $params, $rows, $cols, $item );
                 ++$cols;
             }
 
@@ -168,7 +177,7 @@ sub daily {
 
     $params->{header} = \@header_strings;
 
-    $params->{cb_final}->( $params->{nrows}, $params->{ncols}, $result );
+    $params->{cb_final}->($params);
 }
 
 sub portable_chomp {
