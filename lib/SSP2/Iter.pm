@@ -42,7 +42,7 @@ sub iter {
         );
         my $header_keys = join "|", keys %header;
         my $regex_kv = qr/^($header_keys)\s+(\S+)$/;
-        my $rows = 0;
+        my $row = 0;
 		$self->_set_headers( [] );
         while (<$fh>) {
             SSP2::Util::portable_chomp();
@@ -57,17 +57,17 @@ sub iter {
             }
 
             my @items = split;
-            my $cols = @items;
-            die( sprintf "invalid cols row(%d): %d == %d", $rows, $cols, $self->ncols )
-                unless $cols == $self->ncols;
+            my $ncols = @items;
+            die( sprintf "invalid ncols row(%d): %d == %d", $row, $ncols, $self->ncols )
+                unless $ncols == $self->ncols;
 
-            $cols = 0;
+            my $col = 0;
             for my $item (@items) {
-                $self->cb->( $self, $rows, $cols, $item ) if $self->cb;
-                ++$cols;
+                $self->cb->( $self, $row, $col, $item ) if $self->cb;
+                ++$col;
             }
 
-            ++$rows;
+            ++$row;
         }
 
         die( sprintf "invalid ncols: %d == %d\n", $self->ncols, $header{ncols} )

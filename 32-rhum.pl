@@ -56,15 +56,15 @@ my $si = SSP2::Iter->new(
         }
     },
     cb => sub {
-        my ( $self, $rows, $cols, $item ) = @_;
+        my ( $self, $row, $col, $item ) = @_;
 
         return if $item == $self->ndv;
 
         #
         # sum and count
         #
-        $self->result->[$rows][$cols]{val} += $item;
-        ++$self->result->[$rows][$cols]{cnt};
+        $self->result->[$row][$col]{val} += $item;
+        ++$self->result->[$row][$col]{cnt};
     },
     cb_final => sub {
         my $self = shift;
