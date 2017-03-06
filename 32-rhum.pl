@@ -35,7 +35,7 @@ my $file_fmt = sprintf(
 
 my @files;
 for ( my $i = 1; $i <= $ndays; ++$i ) {
-    my $file = sprintf( $params->{file_fmt}, $i );
+    my $file = sprintf( $file_fmt, $i );
     push @files, $file;
 }
 
