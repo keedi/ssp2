@@ -18,7 +18,7 @@ my $year     = 2006;
 my $ndays    = 365;
 my $ncols    = 751;
 my $nrows    = 601;
-my $output   = "SSP2_Rhum-1d-avg_daily_CityLevel_${year}_sub.txt";
+my $output   = "W:/ssp2/result/$term/$var/$year/SSP2_${var}-1d-avg_${term}_CityLevel_${year}_sub.txt";
 
 my $ss = SSP2::Sigungu->new(
     ncols         => $ncols,
@@ -97,7 +97,9 @@ my $si = SSP2::Iter->new(
         #
         # write
         #
-        my $fh = path($output)->filehandle( ">", ":raw:encoding(UTF-8)" );
+        my $output_path = path($output);
+        $output_path->parent->mkpath;
+        my $fh = $output_path->filehandle( ">", ":raw:encoding(UTF-8)" );
         print $fh join( "\t", $ss->daily_headers($year) ) . "\n";
         for my $code ( $ss->codes ) {
             my @items = ( $code, $ss->nm2($code), $ss->nm1($code) );
@@ -112,6 +114,7 @@ my $si = SSP2::Iter->new(
             }
             print $fh join( "\t", @items ) . "\n";
         }
+        close $fh;
     },
 );
 
