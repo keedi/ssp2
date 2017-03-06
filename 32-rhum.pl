@@ -11,6 +11,8 @@ use SSP2::Iter;
 use SSP2::Sigungu;
 use SSP2::Util;
 
+local $| = 1;
+
 my @years = (
     2006 .. 2025,
     2046 .. 2065,
