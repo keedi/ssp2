@@ -37,7 +37,7 @@ sub doit {
     my $ndays    = 365;
     my $ncols    = 751;
     my $nrows    = 601;
-    my $output   = "W:/ssp2/result/$term/$var/$year/SSP2_${var}-1d-avg_${term}_CityLevel_${year}_sub.txt";
+    my $output   = "W:/ssp2/result/32-${var}/SSP2_${var}-1d-avg_${term}_CityLevel_${year}_sub.txt";
 
     my $ss = SSP2::Sigungu->new(
         ncols         => $ncols,
