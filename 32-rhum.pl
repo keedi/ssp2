@@ -3,6 +3,7 @@
 use utf8;
 use strict;
 use warnings;
+use feature qw( state );
 
 use Benchmark;
 use Path::Tiny;
@@ -41,7 +42,7 @@ sub doit {
     my $nrows    = 601;
     my $output   = "W:/ssp2/result/32-${var}/SSP2_${var}-1d-avg_${term}_CityLevel_${year}_sub.txt";
 
-    my $ss = SSP2::Sigungu->new(
+    state $ss = SSP2::Sigungu->new(
         ncols         => $ncols,
         nrows         => $nrows,
         info_file     => "W:/define/sigungu230_info.txt",
