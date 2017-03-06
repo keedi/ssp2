@@ -116,6 +116,8 @@ __END__
 
 =attr cb
 
+=attr ndv
+
 =attr result
 
 =method iter
