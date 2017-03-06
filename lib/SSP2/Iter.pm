@@ -11,15 +11,16 @@ use SSP2::Util;
 
 our $VERSION = '0.001';
 
-has nrows    => ( is => "ro",  isa => Int, required => 1 );
-has ncols    => ( is => "ro",  isa => Int, required => 1 );
-has files    => ( is => "ro",  isa => ArrayRef[File], coerce => 1, required => 1 );
-has headers  => ( is => "rwp", isa => ArrayRef );
-has cb_init  => ( is => "rw",  isa => CodeRef );
-has cb_final => ( is => "rw",  isa => CodeRef );
-has cb       => ( is => "rw",  isa => CodeRef );
-has ndv      => ( is => "rwp", isa => Int );
-has result   => ( is => "rw" );
+has nrows => ( is => "ro", isa => Int, required => 1 );
+has ncols => ( is => "ro", isa => Int, required => 1 );
+has files => ( is => "ro", isa => ArrayRef [File], coerce => 1, required => 1 );
+has headers      => ( is => "rwp", isa => ArrayRef );
+has cb_init      => ( is => "rw",  isa => CodeRef );
+has cb_final     => ( is => "rw",  isa => CodeRef );
+has cb_file_init => ( is => "rw",  isa => CodeRef );
+has cb           => ( is => "rw",  isa => CodeRef );
+has ndv          => ( is => "rwp", isa => Int );
+has result       => ( is => "rw" );
 
 sub iter {
     my $self = shift;
@@ -29,7 +30,7 @@ sub iter {
     for ( my $file_idx = 0; $file_idx < @{ $self->files }; ++$file_idx ) {
         my $file = $self->files->[$file_idx];
 
-        warn "processing $file\n";;
+        $self->cb_file_init->( $file_idx, $file ) if $self->cb_file_init;
 
         die "file does not exists: $file\n" unless $file->exists;
         my $fh = $file->filehandle( "<", ":raw:encoding(UTF-8)" );
@@ -112,6 +113,8 @@ __END__
 =attr cb_init
 
 =attr cb_final
+
+=attr cb_file_init
 
 =attr cb
 

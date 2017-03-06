@@ -64,6 +64,14 @@ my $si = SSP2::Iter->new(
             }
         }
     },
+    cb_file_init => sub {
+        my ( $self, $file_idx, $file ) = @_;
+
+        #
+        # debug log
+        #
+        debug("processing $file");
+    },
     cb => sub {
         my ( $self, $file_idx, $row, $col, $item ) = @_;
 
@@ -125,3 +133,10 @@ $si->iter;
 my $t1 = Benchmark->new;
 my $td = timediff( $t1, $t0 );
 print "elapsed time:", timestr($td), "\n";
+
+sub debug {
+    my @msgs = @_;
+
+    print STDOUT @msgs, "\n";
+    print STDERR @msgs, "\n";
+}
