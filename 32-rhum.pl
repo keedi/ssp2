@@ -4,6 +4,8 @@ use utf8;
 use strict;
 use warnings;
 
+use Path::Tiny;
+
 use SSP2::Iter;
 use SSP2::Util;
 
@@ -38,7 +40,7 @@ my @files;
 my $si = SSP2::Iter->new(
     ndays   => $ndays,
     ncols   => $ncols,
-    nrows   => $ndays,
+    nrows   => $nrows,
     files   => \@files,
     result  => [],
     cb_init => sub {

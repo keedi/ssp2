@@ -1,4 +1,4 @@
-package SSP2::Iter;
+package SSP2::Util;
 # ABSTRACT: SSP2 util
 
 use utf8;

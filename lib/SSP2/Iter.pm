@@ -14,7 +14,7 @@ our $VERSION = '0.001';
 has ndays    => ( is => "ro",  isa => Int, required => 1 );
 has nrows    => ( is => "ro",  isa => Int, required => 1 );
 has ncols    => ( is => "ro",  isa => Int, required => 1 );
-has files    => ( is => "ro",  isa => ArrayRef[File], required => 1 );
+has files    => ( is => "ro",  isa => ArrayRef[File], coerce => 1, required => 1 );
 has headers  => ( is => "rwp", isa => ArrayRef );
 has cb_init  => ( is => "rw",  isa => CodeRef );
 has cb_final => ( is => "rw",  isa => CodeRef );
