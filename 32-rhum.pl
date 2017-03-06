@@ -97,7 +97,7 @@ my $si = SSP2::Iter->new(
         # write
         #
         my $fh = path($output)->filehandle( ">", ":raw:encoding(UTF-8)" );
-        print $fh join( "\t", $ss->daily_headers ) . "\n";
+        print $fh join( "\t", $ss->daily_headers($year) ) . "\n";
         for my $code ( $ss->codes ) {
             my @items = ( $code, $ss->nm2($code), $ss->nm1($code) );
             for ( my $i = 0; $i < @{ $self->files }; ++$i ) {
