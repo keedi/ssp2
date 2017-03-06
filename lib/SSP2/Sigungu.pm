@@ -29,7 +29,7 @@ sub BUILD {
     $self->_process_boundary;
 }
 
-sub codes { sort keys %{ $_[0]->_info } };
+sub codes { sort { $a <=> $b } keys %{ $_[0]->_info } };
 sub nm1   { $_[0]->_info->{$_[1]}{nm1} };
 sub nm2   { $_[0]->_info->{$_[1]}{nm2} };
 
