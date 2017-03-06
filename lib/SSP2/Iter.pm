@@ -26,7 +26,9 @@ sub iter {
 
     $self->cb_init->($self) if $self->cb_init;
 
-    for my $file ( @{ $self->files } ) {
+    for ( my $file_idx = 0; $file_idx < @{ $self->files }; ++$file_idx ) {
+        my $file = $self->files->[$file_idx];
+
         warn "processing $file\n";;
 
         die "file does not exists: $file\n" unless $file->exists;
@@ -63,7 +65,7 @@ sub iter {
 
             my $col = 0;
             for my $item (@items) {
-                $self->cb->( $self, $row, $col, $item ) if $self->cb;
+                $self->cb->( $self, $file_idx, $row, $col, $item ) if $self->cb;
                 ++$col;
             }
 

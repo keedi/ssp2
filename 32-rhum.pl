@@ -7,6 +7,7 @@ use warnings;
 use Path::Tiny;
 
 use SSP2::Iter;
+use SSP2::Sigungu;
 use SSP2::Util;
 
 my $data_dir = "W:/grid1kmData_ascii";
@@ -17,6 +18,13 @@ my $ndays    = 365;
 my $ncols    = 751;
 my $nrows    = 601;
 my $output   = "32-rhum.dat";
+
+my $ss = SSP2::Sigungu->new(
+    ncols         => $ncols,
+    nrows         => $nrows,
+    info_file     => "./define/sigungu230_info.txt",
+    boundary_file => "./define/sigungu230_boundary.txt",
+);
 
 my @files;
 {
@@ -45,10 +53,10 @@ my $si = SSP2::Iter->new(
     cb_init => sub {
         my $self = shift;
 
-        for ( my $i = 0; $i < $self->nrows; ++$i ) {
-            $self->result->[$i] = [];
-            for ( my $j = 0; $j < $self->ncols; ++$j ) {
-                $self->result->[$i][$j] = {
+        for ( my $i = 0; $i < @{ $self->files }; ++$i ) {
+            $self->result->[$i] = {};
+            for my $code ( $ss->codes ) {
+                $self->result->[$i]{$code} = {
                     val => 0,
                     cnt => 0,
                 };
@@ -56,31 +64,31 @@ my $si = SSP2::Iter->new(
         }
     },
     cb => sub {
-        my ( $self, $row, $col, $item ) = @_;
+        my ( $self, $file_idx, $row, $col, $item ) = @_;
 
         return if $item == $self->ndv;
 
-        #
-        # sum and count
-        #
-        $self->result->[$row][$col]{val} += $item;
-        ++$self->result->[$row][$col]{cnt};
+        my ( $code, $nm1, $nm2 ) = $ss->rowcol2info( $row, $col );
+        return unless $code;
+
+        $self->result->[$file_idx]{$code}{val} += $item;
+        ++$self->result->[$file_idx][$code]{cnt};
     },
     cb_final => sub {
         my $self = shift;
 
         #
-        # avg
+        # daily sigungu avg
         #
-        for ( my $i = 0; $i < $self->nrows; ++$i ) {
-            for ( my $j = 0; $j < $self->ncols; ++$j ) {
-                my $cnt = $self->result->[$i][$j]{cnt};
-                my $val = $self->result->[$i][$j]{val};
+        for ( my $i = 0; $i < @{ $self->files }; ++$i ) {
+            for my $code ( $ss->codes ) {
+                my $val = $self->result->[$i]{$code}{val};
+                my $cnt = $self->result->[$i]{$code}{cnt};
                 if ( $cnt > 0 ) {
-                    $self->result->[$i][$j]{avg} = $val / $cnt;
+                    $self->result->[$i]{$code}{avg} = $val / $cnt;
                 }
                 else {
-                    $self->result->[$i][$j]{avg} = undef;
+                    $self->result->[$i]{$code}{avg} = undef;
                 }
             }
         }
@@ -89,19 +97,19 @@ my $si = SSP2::Iter->new(
         # write
         #
         my $fh = path($output)->filehandle( ">", ":raw:encoding(UTF-8)" );
-        print $fh "$_\n" for @{ $self->headers };
-        for ( my $i = 0; $i < $self->nrows; ++$i ) {
-            for ( my $j = 0; $j < $self->ncols; ++$j ) {
-                my $avg = $self->result->[$i][$j]{avg};
+        print $fh join( "\t", $ss->daily_headers ) . "\n";
+        for my $code ( $ss->codes ) {
+            my @items = ( $code, $ss->nm2($code), $ss->nm1($code) );
+            for ( my $i = 0; $i < @{ $self->files }; ++$i ) {
+                my $avg = $self->result->[$i]{$code}{avg};
                 if ( defined $avg ) {
-                    printf $fh "%.2f", $avg;
+                    push @items, sprintf("%.2f", $avg);
                 }
                 else {
-                    print $fh $self->ndv;
+                    push @items, $self->ndv;
                 }
-                print $fh q{ };
             }
-            print $fh "\n";
+            print $fh join( "\t", @items ) . "\n";
         }
     },
 );
