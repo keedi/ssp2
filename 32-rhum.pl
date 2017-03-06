@@ -22,8 +22,8 @@ my $output   = "SSP2_Rhum-1d-avg_daily_CityLevel_${year}_sub.txt";
 my $ss = SSP2::Sigungu->new(
     ncols         => $ncols,
     nrows         => $nrows,
-    info_file     => "./define/sigungu230_info.txt",
-    boundary_file => "./define/sigungu230_boundary.txt",
+    info_file     => "W:/define/sigungu230_info.txt",
+    boundary_file => "W:/define/sigungu230_boundary.txt",
 );
 
 my @files;
