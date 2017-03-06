@@ -104,7 +104,7 @@ my $si = SSP2::Iter->new(
             for ( my $i = 0; $i < @{ $self->files }; ++$i ) {
                 my $avg = $self->result->[$i]{$code}{avg};
                 if ( defined $avg ) {
-                    push @items, sprintf("%.2f", $avg);
+                    push @items, sprintf("%f", $avg);
                 }
                 else {
                     push @items, $self->ndv;
