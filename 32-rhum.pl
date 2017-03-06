@@ -127,7 +127,7 @@ sub iter {
     $params->{cb_init}->($params);
 
     my @header_strings;
-    for my $file (@files) {
+    for my $file ( @{ $params->{files} } ) {
         warn "processing $file\n";;
 
         my $path = path($file);
