@@ -72,7 +72,7 @@ my $si = SSP2::Iter->new(
         return unless $code;
 
         $self->result->[$file_idx]{$code}{val} += $item;
-        ++$self->result->[$file_idx][$code]{cnt};
+        ++$self->result->[$file_idx]{$code}{cnt};
     },
     cb_final => sub {
         my $self = shift;
