@@ -17,7 +17,7 @@ my $year     = 2006;
 my $ndays    = 365;
 my $ncols    = 751;
 my $nrows    = 601;
-my $output   = "32-rhum.dat";
+my $output   = "SSP2_Rhum-1d-avg_daily_CityLevel_${year}_sub.txt";
 
 my $ss = SSP2::Sigungu->new(
     ncols         => $ncols,
