@@ -30,7 +30,7 @@ sub iter {
     for ( my $file_idx = 0; $file_idx < @{ $self->files }; ++$file_idx ) {
         my $file = $self->files->[$file_idx];
 
-        $self->cb_file_init->( $file_idx, $file ) if $self->cb_file_init;
+        $self->cb_file_init->( $self, $file_idx, $file ) if $self->cb_file_init;
 
         die "file does not exists: $file\n" unless $file->exists;
         my $fh = $file->filehandle( "<", ":raw:encoding(UTF-8)" );
