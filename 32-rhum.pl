@@ -4,6 +4,7 @@ use utf8;
 use strict;
 use warnings;
 
+use Benchmark;
 use Path::Tiny;
 
 use SSP2::Iter;
@@ -114,4 +115,10 @@ my $si = SSP2::Iter->new(
     },
 );
 
+my $t0 = Benchmark->new;
+
 $si->iter;
+
+my $t1 = Benchmark->new;
+my $td = timediff( $t1, $t0 );
+print "elapsed time:", timestr($td), "\n";
