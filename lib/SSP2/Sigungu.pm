@@ -61,11 +61,11 @@ sub _process_info {
     while (<$fh>) {
         SSP2::Util::portable_chomp();
 
-        my $encoded_line = Encode::encode_utf8($_);
+        my $line = Encode::decode_utf8( Encode::encode_utf8($_) );
 
-        next if $encoded_line =~ /^UCC_CODE/;
+        next if $line =~ /^UCC_CODE/;
 
-        my ( $code, $nm1, $nm2 ) = split /\t/, $encoded_line;
+        my ( $code, $nm1, $nm2 ) = split /\t/, $line;
         next unless $code;
 
         $self->_info->{$code} = {
