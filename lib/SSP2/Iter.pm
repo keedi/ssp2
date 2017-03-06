@@ -11,7 +11,6 @@ use SSP2::Util;
 
 our $VERSION = '0.001';
 
-has ndays    => ( is => "ro",  isa => Int, required => 1 );
 has nrows    => ( is => "ro",  isa => Int, required => 1 );
 has ncols    => ( is => "ro",  isa => Int, required => 1 );
 has files    => ( is => "ro",  isa => ArrayRef[File], coerce => 1, required => 1 );
@@ -99,8 +98,6 @@ __END__
 
 ...
 
-
-=attr ndays
 
 =attr nrows
 

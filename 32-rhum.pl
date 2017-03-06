@@ -38,7 +38,6 @@ my @files;
 }
 
 my $si = SSP2::Iter->new(
-    ndays   => $ndays,
     ncols   => $ncols,
     nrows   => $nrows,
     files   => \@files,
