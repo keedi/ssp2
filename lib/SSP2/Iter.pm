@@ -30,7 +30,12 @@ sub iter {
     $self->cb_init->($self) if $self->cb_init;
 
     LOOP_FILE:
-    for ( my $file_idx = 0, my $retry = 0; $file_idx < @{ $self->files }; ++$file_idx, $retry = 0 ) {
+    for (
+        my $file_idx = 0, my $retry = 0;
+        $file_idx < @{ $self->files };
+        ++$file_idx, $retry = 0
+        )
+    {
         my $file = $self->files->[$file_idx];
 
         $self->cb_file_init->( $self, $file_idx, $file ) if $self->cb_file_init;
@@ -47,13 +52,13 @@ sub iter {
             NODATA_value => undef,
         );
         my $header_keys = join "|", keys %header;
-        my $regex_kv = qr/^($header_keys)\s+(\S+)$/;
-        my $row = 0;
-		$self->_set_headers( [] );
+        my $regex_kv    = qr/^($header_keys)\s+(\S+)$/;
+        my $row         = 0;
+        $self->_set_headers( [] );
         while (<$fh>) {
             SSP2::Util::portable_chomp();
 
-            if ( m/$regex_kv/ ) {
+            if (m/$regex_kv/) {
                 my $k = $1;
                 my $v = $2;
                 $header{$k} = $v;
@@ -65,10 +70,17 @@ sub iter {
             my @items = split;
             my $ncols = @items;
             unless ( $ncols == $self->ncols ) {
-                my $msg = sprintf "invalid ncols row(%d): %d == %d: %s", $row, $ncols, $self->ncols, $file;
+                my $msg = sprintf(
+                    "invalid ncols row(%d): %d == %d: %s",
+                    $row,
+                    $ncols,
+                    $self->ncols,
+                    $file
+                );
                 if ( $retry < $self->retry ) {
                     ++$retry;
-                    $self->cb_file_retry->( $self, $file_idx, $file, $retry, $msg ) if $self->cb_file_retry;
+                    $self->cb_file_retry->( $self, $file_idx, $file, $retry, $msg )
+                        if $self->cb_file_retry;
                     close $fh;
                     redo LOOP_FILE;
                 }
@@ -87,13 +99,25 @@ sub iter {
         }
 
         unless ( $self->ncols == $header{ncols} ) {
-            die( sprintf "invalid ncols between attr and header: %d == %d: %s\n", $self->ncols,
-                $header{ncols}, $file );
+            die(
+                sprintf(
+                    "invalid ncols between attr and header: %d == %d: %s\n",
+                    $self->ncols,
+                    $header{ncols},
+                    $file,
+                )
+            );
         }
 
         unless ( $self->nrows == $header{nrows} ) {
-            die( sprintf "invalid nrows between attr and header: %d == %d: %s\n", $self->nrows,
-                $header{nrows}, $file );
+            die(
+                sprintf(
+                    "invalid nrows between attr and header: %d == %d: %s\n",
+                    $self->nrows,
+                    $header{nrows},
+                    $file,
+                )
+            );
         }
 
         close $fh;
