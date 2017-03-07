@@ -22,16 +22,12 @@ sub _logging {
 
     my $t = localtime;
     my $prefix = sprintf( "[%s] [%s] ", $t->datetime, $level );
-
-    $self->file->touchpath;
-    my $fh = $self->file->filehandle( ">>", ":raw:encoding(UTF-8)" );
-
     my $msg = sprintf $fmt, @params;
 
-    print STDOUT $prefix, $msg, "\n";
-    print $fh $prefix, $msg, "\n";
+    $self->file->touchpath;
+    $self->file->append_utf8( $prefix, $msg, "\n" );
 
-    close $fh;
+    print STDOUT $prefix, $msg, "\n";
 }
 
 1;
