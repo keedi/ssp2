@@ -54,6 +54,11 @@ sub doit {
     my $nrows    = 601;
     my $output   = "W:/ssp2/result/32-${var}/SSP2_${var}-1d-avg_${term}_CityLevel_${year}_sub.txt";
 
+    if ( path($output)->is_file ) {
+        $LOG->info("skip: $output file is already exists");
+        return;
+    }
+
     state $ss = SSP2::Sigungu->new(
         ncols         => $ncols,
         nrows         => $nrows,
