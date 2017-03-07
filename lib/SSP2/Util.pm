@@ -21,6 +21,21 @@ sub portable_chomp {
     }
 }
 
+sub normalize_days {
+    my $fmt = shift;
+
+    my @result;
+    my @day_max = ( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
+    for ( my $i = 0; $i < @day_max; ++$i ) {
+        my $max = $day_max[$i];
+        for my $day ( 1 .. $day_max[$i] ) {
+            push @result, sprintf( $fmt, $i + 1, $day );
+        }
+    }
+
+    return @result;
+}
+
 1;
 
 # COPYRIGHT
@@ -40,3 +55,5 @@ __END__
 
 
 =func portable_chomp
+
+=func normalize_month_day
