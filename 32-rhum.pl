@@ -12,7 +12,6 @@ use Try::Tiny;
 use SSP2::Iter;
 use SSP2::Log;
 use SSP2::Sigungu;
-use SSP2::Util;
 
 local $| = 1;
 
