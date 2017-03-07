@@ -112,7 +112,10 @@ sub doit {
             $LOG->debug("processing $file");
         },
         cb_file_retry => sub {
-            my ( $self, $file_idx, $file ) = @_;
+            my ( $self, $file_idx, $file, $retry, $msg ) = @_;
+
+            $LOG->warn($msg);
+            $LOG->debug( "retry(%d/%d): $file", $retry, $self->retry );
 
             for my $code ( $ss->codes ) {
                 $self->result->[$file_idx]{$code} = {

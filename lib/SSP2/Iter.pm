@@ -30,7 +30,7 @@ sub iter {
     $self->cb_init->($self) if $self->cb_init;
 
     LOOP_FILE:
-    for ( my $file_idx = 0, my $retry = $self->retry; $file_idx < @{ $self->files }; ++$file_idx, $retry = $self->retry ) {
+    for ( my $file_idx = 0, my $retry = 0; $file_idx < @{ $self->files }; ++$file_idx, $retry = 0 ) {
         my $file = $self->files->[$file_idx];
 
         $self->cb_file_init->( $self, $file_idx, $file ) if $self->cb_file_init;
@@ -65,14 +65,15 @@ sub iter {
             my @items = split;
             my $ncols = @items;
             unless ( $ncols == $self->ncols ) {
-                if ( $retry > 0 ) {
-                    --$retry;
-                    $self->cb_file_retry->( $self, $file_idx, $file ) if $self->cb_file_retry;
+                my $msg = sprintf "invalid ncols row(%d): %d == %d", $row, $ncols, $self->ncols;
+                if ( $retry < $self->retry ) {
+                    ++$retry;
+                    $self->cb_file_retry->( $self, $file_idx, $file, $retry, $msg ) if $self->cb_file_retry;
                     close $fh;
                     redo LOOP_FILE;
                 }
                 else {
-                    die( sprintf "invalid ncols row(%d): %d == %d", $row, $ncols, $self->ncols );
+                    die $msg;
                 }
             }
 
