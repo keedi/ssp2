@@ -51,7 +51,7 @@ sub doit {
     my $ndays    = 365;
     my $ncols    = 751;
     my $nrows    = 601;
-    my $output   = "W:/ssp2/result/32-${var}/SSP2_${var}-1d-avg_${term}_CityLevel_${year}_sub.txt";
+    my $output   = "W:/ssp2/result/32-${var}/SSP2_${var}-1d-avg_${term}_CityLevel_${year}_sub.csv";
 
     if ( path($output)->is_file ) {
         $LOG->info("skip: $output file is already exists");
