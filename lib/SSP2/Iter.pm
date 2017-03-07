@@ -65,7 +65,7 @@ sub iter {
             my @items = split;
             my $ncols = @items;
             unless ( $ncols == $self->ncols ) {
-                my $msg = sprintf "invalid ncols row(%d): %d == %d", $row, $ncols, $self->ncols;
+                my $msg = sprintf "invalid ncols row(%d): %d == %d: %s", $row, $ncols, $self->ncols, $file;
                 if ( $retry < $self->retry ) {
                     ++$retry;
                     $self->cb_file_retry->( $self, $file_idx, $file, $retry, $msg ) if $self->cb_file_retry;
@@ -86,10 +86,15 @@ sub iter {
             ++$row;
         }
 
-        die( sprintf "invalid ncols: %d == %d\n", $self->ncols, $header{ncols} )
-            unless $self->ncols == $header{ncols};
-        die( sprintf "invalid nrows: %d == %d\n", $self->nrows, $header{nrows} )
-            unless $self->nrows == $header{nrows};
+        unless ( $self->ncols == $header{ncols} ) {
+            die( sprintf "invalid ncols between attr and header: %d == %d: %s\n", $self->ncols,
+                $header{ncols}, $file );
+        }
+
+        unless ( $self->nrows == $header{nrows} ) {
+            die( sprintf "invalid nrows between attr and header: %d == %d: %s\n", $self->nrows,
+                $header{nrows}, $file );
+        }
 
         close $fh;
     }
