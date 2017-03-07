@@ -111,6 +111,16 @@ sub doit {
             #
             $LOG->debug("processing $file");
         },
+        cb_file_retry => sub {
+            my ( $self, $file_idx, $file ) = @_;
+
+            for my $code ( $ss->codes ) {
+                $self->result->[$file_idx]{$code} = {
+                    val => 0,
+                    cnt => 0,
+                };
+            }
+        },
         cb => sub {
             my ( $self, $file_idx, $row, $col, $item ) = @_;
 
