@@ -14,20 +14,23 @@ our $VERSION = '0.001';
 has nrows => ( is => "ro", isa => Int, required => 1 );
 has ncols => ( is => "ro", isa => Int, required => 1 );
 has files => ( is => "ro", isa => ArrayRef [File], coerce => 1, required => 1 );
-has headers      => ( is => "rwp", isa => ArrayRef );
-has cb_init      => ( is => "rw",  isa => CodeRef );
-has cb_final     => ( is => "rw",  isa => CodeRef );
-has cb_file_init => ( is => "rw",  isa => CodeRef );
-has cb           => ( is => "rw",  isa => CodeRef );
-has ndv          => ( is => "rwp", isa => Int );
-has result       => ( is => "rw" );
+has retry => ( is => "ro", isa => Int, default => sub { 3 } );
+has headers       => ( is => "rwp", isa => ArrayRef );
+has cb_init       => ( is => "rw",  isa => CodeRef );
+has cb_final      => ( is => "rw",  isa => CodeRef );
+has cb_file_init  => ( is => "rw",  isa => CodeRef );
+has cb_file_retry => ( is => "rw",  isa => CodeRef );
+has cb            => ( is => "rw",  isa => CodeRef );
+has ndv           => ( is => "rwp", isa => Int );
+has result        => ( is => "rw" );
 
 sub iter {
     my $self = shift;
 
     $self->cb_init->($self) if $self->cb_init;
 
-    for ( my $file_idx = 0; $file_idx < @{ $self->files }; ++$file_idx ) {
+    LOOP_FILE:
+    for ( my $file_idx = 0, my $retry = $self->retry; $file_idx < @{ $self->files }; ++$file_idx, $retry = $self->retry ) {
         my $file = $self->files->[$file_idx];
 
         $self->cb_file_init->( $self, $file_idx, $file ) if $self->cb_file_init;
@@ -61,8 +64,17 @@ sub iter {
 
             my @items = split;
             my $ncols = @items;
-            die( sprintf "invalid ncols row(%d): %d == %d", $row, $ncols, $self->ncols )
-                unless $ncols == $self->ncols;
+            unless ( $ncols == $self->ncols ) {
+                if ( $retry > 0 ) {
+                    --$retry;
+                    $self->cb_file_retry->( $self, $file_idx, $file ) if $self->cb_file_retry;
+                    close $fh;
+                    redo LOOP_FILE;
+                }
+                else {
+                    die( sprintf "invalid ncols row(%d): %d == %d", $row, $ncols, $self->ncols );
+                }
+            }
 
             my $col = 0;
             for my $item (@items) {
@@ -115,6 +127,8 @@ __END__
 =attr cb_final
 
 =attr cb_file_init
+
+=attr cb_file_retry
 
 =attr cb
 
