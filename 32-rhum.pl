@@ -7,6 +7,7 @@ use feature qw( state );
 
 use Benchmark;
 use Path::Tiny;
+use Try::Tiny;
 
 use SSP2::Iter;
 use SSP2::Log;
@@ -27,12 +28,17 @@ my @years = (
 );
 
 for my $year (@years) {
-    $log->debug("processing $year");
+    $log->info("processing $year");
     my $t0 = Benchmark->new;
-    doit($year);
+    try {
+        doit($year);
+    }
+    catch {
+        $log->warn("caught error: $_\n");
+    };
     my $t1 = Benchmark->new;
     my $td = timediff( $t1, $t0 );
-    $log->debug( "elapsed time:", timestr($td) );
+    $log->info( "elapsed time:", timestr($td) );
 }
 
 sub doit {
