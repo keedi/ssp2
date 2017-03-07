@@ -9,10 +9,16 @@ use Benchmark;
 use Path::Tiny;
 
 use SSP2::Iter;
+use SSP2::Log;
 use SSP2::Sigungu;
 use SSP2::Util;
 
 local $| = 1;
+
+my $log_file = shift;
+die "Usage: $0 <log_file>\n" unless $log_file;
+
+my $log = SSP2::Log->new( file => $log_file );
 
 my @years = (
     2006 .. 2025,
@@ -21,12 +27,12 @@ my @years = (
 );
 
 for my $year (@years) {
-    debug("processing $year");
+    $log->debug("processing $year");
     my $t0 = Benchmark->new;
     doit($year);
     my $t1 = Benchmark->new;
     my $td = timediff( $t1, $t0 );
-    debug( "elapsed time:", timestr($td) );
+    $log->debug( "elapsed time:", timestr($td) );
 }
 
 sub doit {
@@ -92,7 +98,7 @@ sub doit {
             #
             # debug log
             #
-            debug("processing $file");
+            $log->debug("processing $file");
         },
         cb => sub {
             my ( $self, $file_idx, $row, $col, $item ) = @_;
@@ -149,11 +155,4 @@ sub doit {
     );
 
     $si->iter;
-}
-
-sub debug {
-    my @msgs = @_;
-
-    print STDOUT @msgs, "\n";
-    print STDERR @msgs, "\n";
 }
