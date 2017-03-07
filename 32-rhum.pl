@@ -19,7 +19,7 @@ local $| = 1;
 my $log_file = shift;
 die "Usage: $0 <log_file>\n" unless $log_file;
 
-my $log = SSP2::Log->new( file => $log_file );
+my $LOG = SSP2::Log->new( file => $log_file );
 
 my @years = (
     2006 .. 2025,
@@ -28,17 +28,17 @@ my @years = (
 );
 
 for my $year (@years) {
-    $log->info("processing $year");
+    $LOG->info("processing $year");
     my $t0 = Benchmark->new;
     try {
         doit($year);
     }
     catch {
-        $log->warn("caught error: $_\n");
+        $LOG->warn("caught error: $_\n");
     };
     my $t1 = Benchmark->new;
     my $td = timediff( $t1, $t0 );
-    $log->info( "elapsed time:", timestr($td) );
+    $LOG->info( "elapsed time:", timestr($td) );
 }
 
 sub doit {
@@ -104,7 +104,7 @@ sub doit {
             #
             # debug log
             #
-            $log->debug("processing $file");
+            $LOG->debug("processing $file");
         },
         cb => sub {
             my ( $self, $file_idx, $row, $col, $item ) = @_;
