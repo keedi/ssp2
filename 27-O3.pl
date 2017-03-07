@@ -73,7 +73,7 @@ sub doit {
             $term,
             $var,
             $year,
-            $var,
+            lc($var),
             $term,
             $year,
         );
