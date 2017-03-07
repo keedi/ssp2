@@ -12,17 +12,24 @@ our $VERSION = '0.001';
 
 has file => ( is => "ro", isa => Path, coerce => 1, required => 1 );
 
-sub debug {
-    my ( $self, @msgs ) = @_;
+sub debug { shift->_logging( "debug", @_ ) }
+sub info  { shift->_logging( "info",  @_ ) }
+sub warn  { shift->_logging( "warn",  @_ ) }
+sub error { shift->_logging( "error", @_ ) }
+
+sub _logging {
+    my ( $self, $level, $fmt, @params ) = @_;
 
     my $t = localtime;
-    my $prefix = sprintf( "[%s] [%s] ", $t->datetime, "debug" );
+    my $prefix = sprintf( "[%s] [%s] ", $t->datetime, $level );
 
     $self->file->touchpath;
     my $fh = $self->file->filehandle( ">>", ":raw:encoding(UTF-8)" );
 
-    print STDOUT $prefix, @msgs, "\n";
-    print $fh $prefix, @msgs, "\n";
+    my $msg = sprintf $fmt, @params;
+
+    print STDOUT $prefix, $msg, "\n";
+    print $fh $prefix, $msg, "\n";
 
     close $fh;
 }
@@ -48,3 +55,9 @@ __END__
 =attr file
 
 =method debug
+
+=method info
+
+=method warn
+
+=method error
