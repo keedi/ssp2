@@ -34,11 +34,11 @@ for my $year (@years) {
         doit($year);
     }
     catch {
-        $LOG->warn("caught error: $_\n");
+        $LOG->warn("caught error: $_");
     };
     my $t1 = Benchmark->new;
     my $td = timediff( $t1, $t0 );
-    $LOG->info( "elapsed time:", timestr($td) );
+    $LOG->info( "elapsed time: %s", timestr($td) );
 }
 
 sub doit {
