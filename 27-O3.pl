@@ -52,6 +52,7 @@ sub doit {
     my $nrows    = 601;
     my $output   = "W:/ssp2/result/27-${var}/SSP2_${var}-1d-avg_${term}_CityLevel_${year}_sub.csv";
     my $encoding = "cp949";
+    my $csv_sep  = ",";
 
     if ( path($output)->is_file ) {
         $LOG->info("skip: $output file is already exists");
@@ -159,7 +160,7 @@ sub doit {
             my $output_path = path($output);
             $output_path->parent->mkpath;
             my $fh = $output_path->filehandle( ">", ":raw:encoding($encoding)" );
-            print $fh join( "\t", $ss->daily_headers($year) ) . "\n";
+            print $fh join( $csv_sep, $ss->daily_headers($year) ) . "\n";
             for my $code ( $ss->codes ) {
                 my @items = ( $code, $ss->nm2($code), $ss->nm1($code) );
                 for ( my $i = 0; $i < @{ $self->files }; ++$i ) {
@@ -171,7 +172,7 @@ sub doit {
                         push @items, $self->ndv;
                     }
                 }
-                print $fh join( "\t", @items ) . "\n";
+                print $fh join( $csv_sep, @items ) . "\n";
             }
             close $fh;
         },
