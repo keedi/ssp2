@@ -14,7 +14,8 @@ our $VERSION = '0.001';
 has nrows => ( is => "ro", isa => Int, required => 1 );
 has ncols => ( is => "ro", isa => Int, required => 1 );
 has files => ( is => "ro", isa => ArrayRef [File], coerce => 1, required => 1 );
-has retry => ( is => "ro", isa => Int, default => sub { 3 } );
+has retry       => ( is => "ro", isa => Int, default => sub { 3 } );
+has retry_delay => ( is => "ro", isa => Int, default => sub { 1 } );
 has headers       => ( is => "rwp", isa => ArrayRef );
 has cb_init       => ( is => "rw",  isa => CodeRef );
 has cb_final      => ( is => "rw",  isa => CodeRef );
@@ -79,8 +80,10 @@ sub iter {
                 );
                 if ( $retry < $self->retry ) {
                     ++$retry;
-                    $self->cb_file_retry->( $self, $file_idx, $file, $retry, $msg )
-                        if $self->cb_file_retry;
+                    if ( $self->cb_file_retry ) {
+                        sleep $self->retry_delay if $self->retry_delay;
+                        $self->cb_file_retry->( $self, $file_idx, $file, $retry, $msg )
+                    }
                     close $fh;
                     redo LOOP_FILE;
                 }
@@ -149,6 +152,10 @@ __END__
 =attr ncols
 
 =attr files
+
+=attr retry
+
+=attr retry_delay
 
 =attr headers
 
