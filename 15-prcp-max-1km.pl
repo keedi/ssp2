@@ -3,7 +3,6 @@
 use utf8;
 use strict;
 use warnings;
-use feature qw( state );
 
 use Benchmark;
 use Path::Tiny;
