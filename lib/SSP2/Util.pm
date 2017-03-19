@@ -36,6 +36,22 @@ sub normalize_days {
     return @result;
 }
 
+sub month_days {
+    my @months = @_;
+
+    my @result;
+    my @day_max = ( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
+    for my $month (@months) {
+        unless ( 1 <= $month && $month <= 12 ) {
+            push @result, 0;
+            next;
+        }
+        push @result, $day_max[ $month - 1 ];
+    }
+
+    return wantarray ? @result : $result[0];
+}
+
 1;
 
 # COPYRIGHT

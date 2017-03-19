@@ -10,6 +10,7 @@ use Try::Tiny;
 
 use SSP2::Iter;
 use SSP2::Log;
+use SSP2::Util;
 
 local $| = 1;
 
@@ -141,11 +142,10 @@ sub doit {
                         #
                         # skip unless 6 ~ 8 month
                         #
-                        my @ssp2_day_max = ( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
-                        my $start        = 0;
-                        my $end          = 0;
-                        $start = map { $start += $_ } @ssp2_day_max[ 0 .. 4 ];
-                        $end   = map { $end   += $_ } @ssp2_day_max[ 0 .. 7 ];
+                        my $start = 0;
+                        my $end   = 0;
+                        $start = map { $start += $_ } SSP2::Util::month_days( 1 .. 5 );
+                        $end   = map { $end   += $_ } SSP2::Util::month_days( 1 .. 8 );
                         next unless ( $start <= $i && $i < $end );
 
                         $sum = 0 unless defined $sum;
