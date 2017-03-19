@@ -50,7 +50,7 @@ sub doit {
     my $ndays    = 365;
     my $ncols    = 751;
     my $nrows    = 601;
-    my $output   = "W:/ssp2/result/29-${var}/SSP2_${var}-1d-max_${term}_CityLevel_${year}_sub.csv";
+    my $output   = "W:/ssp2/result/29-${var}/SSP2_${var}-1d-max_daily_CityLevel_${year}_sub.csv";
     my $encoding = "cp949";
     my $csv_sep  = ",";
 

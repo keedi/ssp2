@@ -50,7 +50,7 @@ sub doit {
     my $ndays    = 365;
     my $ncols    = 751;
     my $nrows    = 601;
-    my $output   = "W:/ssp2/result/14-${var}/SSP2_${var}-1y-sum_${term}_1km_${year}_sub.csv";
+    my $output   = "W:/ssp2/result/14-${var}/SSP2_${var}-1y-sum_yearly_1km_${year}_sub.csv";
     my $encoding = "cp949";
 
     if ( path($output)->is_file ) {
