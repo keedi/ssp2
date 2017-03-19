@@ -115,7 +115,7 @@ sub daily_headers {
         "시도", 
     );
 
-    my @ssp2_day_max = ( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
+    my @ssp2_day_max = SSP2::Util::month_days( 1 .. 12 );
     for ( my $i = 0; $i < @ssp2_day_max; ++$i ) {
         my $max = $ssp2_day_max[$i];
         for my $day ( 1 .. $ssp2_day_max[$i] ) {
