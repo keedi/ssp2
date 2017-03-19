@@ -96,9 +96,7 @@ sub doit {
             for ( my $i = 0; $i < @{ $self->files }; ++$i ) {
                 $self->result->[$i] = {};
                 for my $code ( $ss->codes ) {
-                    $self->result->[$i]{$code} = {
-                        max => undef,
-                    };
+                    $self->result->[$i]{$code} = undef;
                 }
             }
         },
@@ -117,9 +115,7 @@ sub doit {
             $LOG->debug( "retry(%d/%d): $file", $retry, $self->retry );
 
             for my $code ( $ss->codes ) {
-                $self->result->[$file_idx]{$code} = {
-                    max => undef,
-                };
+                $self->result->[$file_idx]{$code} = undef;
             }
         },
         cb => sub {
@@ -130,13 +126,13 @@ sub doit {
             my ( $code, $nm1, $nm2 ) = $ss->rowcol2info( $row, $col );
             return unless $code;
 
-            if ( defined $self->result->[$file_idx]{$code}{max} ) {
-                if ( $item > $self->result->[$file_idx]{$code}{max} ) {
-                    $self->result->[$file_idx]{$code}{max} = $item;
+            if ( defined $self->result->[$file_idx]{$code} ) {
+                if ( $item > $self->result->[$file_idx]{$code} ) {
+                    $self->result->[$file_idx]{$code} = $item;
                 }
             }
             else {
-                $self->result->[$file_idx]{$code}{max} = $item;
+                $self->result->[$file_idx]{$code} = $item;
             }
         },
         cb_final => sub {
@@ -152,7 +148,7 @@ sub doit {
             for my $code ( $ss->codes ) {
                 my @items = ( $code, $ss->nm2($code), $ss->nm1($code) );
                 for ( my $i = 0; $i < @{ $self->files }; ++$i ) {
-                    my $max = $self->result->[$i]{$code}{max};
+                    my $max = $self->result->[$i]{$code};
                     if ( defined $max ) {
                         push @items, sprintf("%f", $max);
                     }
