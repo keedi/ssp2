@@ -157,9 +157,9 @@ sub doit {
             }
             for ( my $row = 0; $row < $self->nrows; ++$row ) {
                 for ( my $col = 0; $col < $self->ncols; ++$col ) {
-                    my $sum = $result[$row][$col];
-                    if ( defined $sum ) {
-                        printf $fh "%f", $sum;
+                    my $val = $result[$row][$col];
+                    if ( defined $val ) {
+                        printf $fh "%f", $val;
                     }
                     else {
                         print $fh $self->ndv;
