@@ -144,8 +144,8 @@ sub doit {
                         #
                         my $start = 0;
                         my $end   = 0;
-                        $start = map { $start += $_ } SSP2::Util::month_days( 1 .. 5 );
-                        $end   = map { $end   += $_ } SSP2::Util::month_days( 1 .. 8 );
+                        map { $start += $_ } SSP2::Util::month_days( 1 .. 5 );
+                        map { $end   += $_ } SSP2::Util::month_days( 1 .. 8 );
                         next unless ( $start <= $i && $i < $end );
 
                         $sum = 0 unless defined $sum;
