@@ -119,10 +119,18 @@ sub daily_headers {
     for ( my $i = 0; $i < @ssp2_day_max; ++$i ) {
         my $max = $ssp2_day_max[$i];
         for my $day ( 1 .. $ssp2_day_max[$i] ) {
-            push(
-                @headers,
-                sprintf( "%04d-%02d-%02d", $year, $i + 1, $day ),
-            );
+            if ($year) {
+                push(
+                    @headers,
+                    sprintf( "%04d-%02d-%02d", $year, $i + 1, $day ),
+                );
+            }
+            else {
+                push(
+                    @headers,
+                    sprintf( "%02d-%02d", $i + 1, $day ),
+                );
+            }
         }
     }
 
