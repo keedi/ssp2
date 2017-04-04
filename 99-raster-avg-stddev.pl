@@ -63,7 +63,7 @@ sub doit {
                 $self->result->{cache}[$i] = [];
                 for ( my $row = 0; $row < $self->nrows; ++$row ) {
                     $self->result->{cache}[$i][$row] = [];
-                    for ( my $col = 0; $i < $self->ncols; ++$col ) {
+                    for ( my $col = 0; $col < $self->ncols; ++$col ) {
                         $self->result->{cache}[$i][$row][$col] = undef;
                     }
                 }
