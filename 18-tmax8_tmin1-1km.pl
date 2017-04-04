@@ -222,7 +222,7 @@ sub doit {
     );
     $si_tmin1->iter;
 
-    my $grid_1km = si_subtract( $si_tmax8 - $si_tmin1 );
+    my $grid_1km = si_subtract( $si_tmax8, $si_tmin1 );
     die "subtract tmax8, tmin1 failed\n" unless $grid_1km;
 
     write_grid_1km( $output, $encoding, $si_tmax8, $grid_1km );
